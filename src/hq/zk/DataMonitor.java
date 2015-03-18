@@ -31,7 +31,7 @@ public class DataMonitor implements Watcher, StatCallback {
 		this.listener = listener;
 		// Get things started by checking if the node exists. We are going
 		// to be completely event driven
-		zk.exists(znode, true, this, null);
+		zk.exists(znode, true, this, null); //第二个参数是否设置watcher,一次性的
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class DataMonitor implements Watcher, StatCallback {
 			System.out.println("node改变了");
 			if (path != null && path.equals(znode)) {
 				// Something has changed on the node, let's find out
-				zk.exists(znode, true, this, null);// 异步调用
+				zk.exists(znode, true, this, null);// 异步调用,再次设置watcher才能够继续监听这个节点。这个watcher是在zk初始化的时候指定。
 			}
 		}
 		if (chainedWatcher != null) {
@@ -84,7 +84,7 @@ public class DataMonitor implements Watcher, StatCallback {
 	}
 
 	public void processResult(int rc, String path, Object ctx, Stat stat) {
-		boolean exists; // znode存在后面的结果就是true,不存在就是false.
+		boolean exists; // 若znode存在，后面的结果就是true,不存在就是false.
 		switch (rc) {
 		case Code.Ok:
 			exists = true;
